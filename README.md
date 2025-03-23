@@ -1,2 +1,29 @@
 # 3-click-deployment
-Auto deployment services and monitors for persona instance, VPS, etc.
+
+Auto deployment and monitor in **3 clicks** personal instances, VPS, etc **at 0 cost** with a **<1s downtime** by deployment.
+
+3-click-deployment is an agent that
+
+### How to setup for a project 
+
+1. Make your project containerisable through a **Dockerfile** or a **docker-compose.yaml** .
+2. Define a [config](#config) that suits your needs.
+
+## Config
+
+```{json}
+{
+    "name" : "site-dev-1",
+    "repository" : "https://github.com/username/repository.github.io.git",
+    "url" : "dev.username.com",
+    "branch" : "dev",
+    "pull_time_minute" : 1
+},
+{
+    "name" : "site-prod",
+    "repository" : "https://github.com/username/repository.github.io.git",
+    "url" : "username.com",
+    "branch" : "main",
+    "pull_time_minute" : 60
+}
+```
