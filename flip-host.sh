@@ -3,12 +3,14 @@
 # Init
 base_logs='/3-click-deployment/logs/'
 base_repositories='/3-click-deployment/repositories/'
+base_nginx_sites='/etc/nginx/sites-enabled'
 echo "$base_logs"
 echo "$base_repositories"
 
 # Prerequisites
 # sudo apt install jq
 # install jq, nginx, certbot
+
 
 # Read JSON file
 json_data=$(cat config.json)
@@ -23,6 +25,7 @@ for row in $(echo $json_data | jq -c '.[]'); do
   port_1=$(echo $row | jq -r '.port_1')
   port_2=$(echo $row | jq -r '.port_2')
   docker_port=$(echo $row | jq -r '.docker_port')
+
 
   # Print the extracted values
   echo "GitHub URL: $github_url"
@@ -79,43 +82,80 @@ for row in $(echo $json_data | jq -c '.[]'); do
     exit 1
   fi
 
-    if [ -n "$docker_line_1" ] && [ "$current_name_1" != "container-$id-$port_1" ]; then
-      echo "$docker_line_1"
-      echo "$port_1 is not used by a $id container"
-      echo "Stopping deployment by safety"
-      exit 1
-    fi
+  if [ -n "$docker_line_1" ] && [ "$current_name_1" != "container-$id-$port_1" ]; then
+    echo "$docker_line_1"
+    echo "$port_1 is not used by a $id container"
+    echo "Stopping deployment by safety"
+    exit 1
+  fi
 
-    if [ -n "$docker_line_2" ] && [ "$current_name_2" != "container-$id-$port_2" ]; then
-      echo "$port_1 is not used by a $id container"
-      echo "Stopping deployment by safety"
-      exit 1
-    fi
+  if [ -n "$docker_line_2" ] && [ "$current_name_2" != "container-$id-$port_2" ]; then
+    echo "$port_1 is not used by a $id container"
+    echo "Stopping deployment by safety"
+    exit 1
+  fi
 
-    # Docker command
-    new_image_name="image-portfolio-$new_port"
-    old_image_name="image-portfolio-$old_port"
-    new_container_name="container-portfolio-$new_port"
-    old_container_name="container-portfolio-$old_port"
-    echo "new image |$new_image_name|"
-    echo "old_container_name |$old_container_name|"
+  # Docker command
+  new_image_name="image-$id-$new_port"
+  old_image_name="image-$id-$old_port"
+  new_container_name="container-$id-$new_port"
+  old_container_name="container-$id-$old_port"
+  echo "new image |$new_image_name|"
+  echo "old_container_name |$old_container_name|"
 
 
-    sudo docker build -t "$new_image_name" . # add the tag commit ?
-    # need to retreive the port of the Dockerfile
-    sudo docker run --name "$new_container_name" -d -p "$new_port:$docker_port" "$new_image_name"
+  sudo docker build -t "$new_image_name" . # add the tag commit ?
+  # need to retreive the port of the Dockerfile
+  sudo docker run --name "$new_container_name" -d -p "$new_port:$docker_port" "$new_image_name"
 
-    # Restart nginx
-    # sudo systemctl restart nginx
-    # switch nginx in /etc/nginx/sites-enabled
+  # Restart nginx
+  # sudo systemctl restart nginx
+  # switch config
+  # Use grep and awk to extract the current proxy_pass value
+  path_nginx_file="$base_nginx_sites/$id"
+  current_proxy_pass=$(grep "proxy_pass" "$path_nginx_file" | awk -F 'http://localhost:' '{print "http://localhost:"$2}')
 
-    # Delete old docker (if running (not first time))
-    if [ "$is_first_deployment" != "true" ]; then
-       sudo docker kill "$old_container_name"
-       sudo docker rm "$old_container_name"
-       sudo docker image rm "$old_image_name" -f
-    fi
 
-    # Clean repository
-    sudo rm -rf "$base_repositories/$id"
-  done
+  # If first deployment : use other port
+  if [ "$is_first_deployment" == "true" ]; then
+     sudo docker kill "$old_container_name"
+     sudo docker rm "$old_container_name"
+     sudo docker image rm "$old_image_name" -f
+  fi
+
+  # Check if a proxy_pass was found
+  if [ -z "$current_proxy_pass" ]; then
+    echo "No proxy_pass found in the nginx conf"
+    exit 1
+  else
+    echo "The current proxy_pass is: $current_proxy_pass"
+  fi
+
+  echo "before grep : |$current_proxy_pass|$old_port|"
+  # Check if the string contains the substring
+  if [ "$first_deployment" != "true" ] && [ echo "$current_proxy_pass" | grep -q "$old_port" ]; then
+    echo "The proxy_pass will be edit"
+  elif [ "$first_deployment" != "true" ];then
+    echo "The current proxy pass ($current_proxy_pass) does not contain the old port ($old_port)"
+    exit 1
+  else
+   echo "First deployment, will not change old_port "
+  fi
+
+  if [ "$is_first_deployment" != "true" ]; then
+     sudo sed -i "s|$old_port|$new_port|g" "$path_nginx_file"
+  fi
+
+  sudo systemctl restart nginx
+
+
+  # Delete old docker (if running (not first time))
+  if [ "$is_first_deployment" != "true" ]; then
+     sudo docker kill "$old_container_name"
+     sudo docker rm "$old_container_name"
+     sudo docker image rm "$old_image_name" -f
+  fi
+
+  # Clean repository
+  sudo rm -rf "$base_repositories/$id"
+done
