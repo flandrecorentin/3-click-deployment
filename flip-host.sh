@@ -117,11 +117,6 @@ for row in $(echo $json_data | jq -c '.[]'); do
 
 
   # If first deployment : use other port
-  if [ "$is_first_deployment" == "true" ]; then
-     sudo docker kill "$old_container_name"
-     sudo docker rm "$old_container_name"
-     sudo docker image rm "$old_image_name" -f
-  fi
 
   # Check if a proxy_pass was found
   if [ -z "$current_proxy_pass" ]; then
@@ -133,9 +128,9 @@ for row in $(echo $json_data | jq -c '.[]'); do
 
   echo "before grep : |$current_proxy_pass|$old_port|"
   # Check if the string contains the substring
-  if [ "$first_deployment" != "true" ] && [ echo "$current_proxy_pass" | grep -q "$old_port" ]; then
+  if [ "$is_first_deployment" != "true" ] && echo "$current_proxy_pass" | grep -q "$old_port"; then
     echo "The proxy_pass will be edit"
-  elif [ "$first_deployment" != "true" ];then
+  elif [ "$first_deployment" != "true" ]; then
     echo "The current proxy pass ($current_proxy_pass) does not contain the old port ($old_port)"
     exit 1
   else
