@@ -27,3 +27,12 @@ Auto deployment and monitor in **3 clicks** personal instances, VPS, etc **at 0 
     "pull_time_minute" : 60
 }
 ```
+
+# Features
+
+- Logs into /3-click-deployment/logs/
+- Parameterize flip-host.sh (at least for config id)
+- Create a validator script for config file
+- Default 502 page redirection
+- Create initialize script
+- Add example account (maybe the same as 502 page redirection)
