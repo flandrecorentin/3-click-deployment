@@ -45,7 +45,9 @@ if [ -z "$json_block" ]; then echo "[ERROR] No json block find with id |$id| int
 # TODO : default value
 # Retrieve 3-click-development config file values
 github_url=$(echo $json_block | jq -r '.github_url')
-branch=$(echo $json_block | jq -r '.branch')
+github_owner=$(echo $json_block | jq -r '.github_owner')
+github_repository=$(echo $json_block | jq -r '.github_repository')
+branch=$(echo $json_block | jq -r '.github_branch')
 dns=$(echo $json_block | jq -r '.dns')
 port_1=$(echo $json_block | jq -r '.port_1')
 port_2=$(echo $json_block | jq -r '.port_2')
@@ -55,7 +57,8 @@ docker_port=$(echo $json_block | jq -r '.docker_port')
 now=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[INFO] ---------------------$now--------------------------"
 echo "[INFO] Id of config: $id"
-echo "[INFO] GitHub URL: |$github_url| with branch |$branch|"
+echo "[INFO] Github URL : |$github_url|"
+echo "[INFO] GitHub : repository |$github_repository| owned by |$github_url| with branch |$branch|"
 echo "[INFO] DNS used: |$dns|"
 echo "[INFO] Ports used for flip : |$port_1|, |$port_2| and expose docker port |$docker_port|"
 echo "[INFO] -----------------------------------------------------"; echo ""
