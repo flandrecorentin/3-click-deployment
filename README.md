@@ -9,6 +9,14 @@ Auto deployment and monitor in **3 clicks** personal instances, VPS, etc **at 0 
 1. Make your project containerisable through a **Dockerfile** or a **docker-compose.yaml** .
 2. Define a [config](#config) that suits your needs.
 
+## Installation
+
+Install github CLI on your host :
+
+[Official Github documentation - Install gh](https://github.com/cli/cli?tab=readme-ov-file#installation)
+
+[Official Github documentation - Install gh on **Linux**](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
 ## Config
 
 ```{json}
