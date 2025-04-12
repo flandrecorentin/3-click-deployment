@@ -14,6 +14,9 @@ sudo apt install snapd
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
+# Install python
+sudo apt install python3
+
 # Install github cli
 (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
 	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
@@ -33,3 +36,4 @@ base_repositories='/3-click-deployment/repositories/'
 sudo mkdir "$base_logs"
 sudo mkdir "$base_repositories"
 sudo touch config.json
+sudo touch "$base_logs/cron"
