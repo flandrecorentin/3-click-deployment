@@ -3,7 +3,7 @@
 sudo apt update
 
 # Install jq
-sudo apt install jq
+sudo apt install -y jq
 
 # Install and start nginx
 sudo apt install nginx

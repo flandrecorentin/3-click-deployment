@@ -39,6 +39,7 @@ git clone https://github.com/flandrecorentin/3-click-deployment.git
 
 Install necessary tools and cli
 ```{bash}
+cd /3-click-deployment/
 bash install-agent.sh
 ```
 
@@ -47,8 +48,7 @@ If installation of gh cli (GitHub CLI), check the [Official Github documentation
 To make the agent able to request your repositories, you need to add your github token (see https://github.com/settings/tokens to create one) into the _/3-click-deployment/.github_ file
 
 ```{bash}
-GITHUB_TOKEN=<YOUR_GITHUB_TOKEN>
-sed -i "s|token=|token=$GITHUB_TOKEN|g" "/3-click-deployment/.github"
+GITHUB_TOKEN=<YOUR_GITHUB_TOKEN> && sed -i "s|token=|token=$GITHUB_TOKEN|g" "/3-click-deployment/.github"
 ```
 
 ## Config

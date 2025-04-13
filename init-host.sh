@@ -64,3 +64,10 @@ echo "[INFO] ---------------------$now--------------------------"
 echo "[INFO] Run certbot for ngin for following dns: |$dns|"
 sudo certbot --nginx --non-interactive --agree-tos -d "$dns"
 echo "[INFO] -----------------------------------------------------"; echo ""
+
+# Certbot
+now=$(date +"%Y-%m-%d %H:%M:%S")
+echo "[INFO] ---------------------$now--------------------------"
+echo "[INFO] Run flip-host.sh script"
+bash flip-host.sh "$id"
+echo "[INFO] -----------------------------------------------------"; echo ""
