@@ -5,6 +5,7 @@ from datetime import datetime
 
 flip_host_script_path = '/3-click-deployment/flip-host.sh'
 log_file_path = '/3-click-deployment/logs/cron'
+conf_file_path = '/3-click-deployment/config.json'
 github_file_path = '/3-click-deployment/.github'
 github_api_version = 'v3'
 debug = False
@@ -13,7 +14,7 @@ def job():
     if debug: print("...Executing cron.py")
     if debug: print_log("-- Start cron", "DEBUG")
 
-    with open('config.json', 'r') as file:
+    with open(conf_file_path, 'r') as file:
         config_data = json.load(file)
 
     for config in config_data:

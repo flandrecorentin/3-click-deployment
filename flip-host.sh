@@ -6,8 +6,8 @@ if [ "$#" -eq 2 ]; then
     config_file="$1"
     id="$2"
 elif [ "$#" -eq 1 ]; then
-  echo "...Executing init-host.sh with config.json id: |$1|"
-  config_file="config.json"
+  echo "...Executing init-host.sh with /3-click-deployment/config.json id: |$1|"
+  config_file="/3-click-deployment/config.json"
   id="$1"
 else
   echo "[ERROR] Incorrect number of argument"
@@ -40,7 +40,7 @@ fi
 
 
 # Read JSON file
-json_data=$(cat config.json)
+json_data=$(cat config_file)
 
 # Loop through each object in the array
 json_block=$(jq --arg id "$id" '.[] | select(.id == $id)' "$config_file")
